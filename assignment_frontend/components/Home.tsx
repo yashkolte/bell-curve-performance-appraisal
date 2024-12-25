@@ -12,7 +12,7 @@ export function Home() {
                 text="Employee List"
             />
             <TableDemo />
-            <Link href="/analyze"><RainbowButton>Analyze</RainbowButton></Link>
+            <a href="/analyze"><RainbowButton>Analyze</RainbowButton></a>
         </div>
     )
 }

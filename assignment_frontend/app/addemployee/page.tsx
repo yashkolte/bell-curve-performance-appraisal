@@ -17,6 +17,7 @@ import { useTheme } from "next-themes"; // Manages light/dark theme
 import ShineBorder from "@/components/ui/shine-border"; // Custom styled border component
 import GradualSpacing from "@/components/ui/gradual-spacing"; // Custom text spacing component
 import { useState } from "react"; // React state management
+import Link from "next/link";
 
 // Zod schema to validate form inputs
 const formSchema = z.object({
@@ -152,6 +153,8 @@ export default function AddEmployeePage() {
             </Button>
           </form>
         </Form>
+
+        <a className="w-[96%] m-auto flex justify-center bg-gray-950 hover:bg-[#2f2f31] text-slate-100 py-2 px-4 rounded items-center" href="/addemployee/excel"><p className="text-sm">Add Employees from Excel file</p></a>
 
         {/* Feedback Message */}
         {message && (
