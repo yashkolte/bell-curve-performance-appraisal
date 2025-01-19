@@ -1,13 +1,9 @@
 package com.yashkolte.Assignment.services;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
-
 import com.yashkolte.Assignment.model.Category;
 import com.yashkolte.Assignment.model.Employee;
 
@@ -59,6 +55,13 @@ public class BellCurveService {
             double standard = category.getStandardPercentage();               // Standard percentage
             double actualPercentage = actual.getOrDefault(category.getName(), 0.0); // Actual percentage
             deviation.put(category.getName(), actualPercentage - standard);  // Calculate and store deviation
+        }
+
+        try {
+            ArrayList <Integer> list = new ArrayList<>();
+            //code
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
 
         return deviation;
