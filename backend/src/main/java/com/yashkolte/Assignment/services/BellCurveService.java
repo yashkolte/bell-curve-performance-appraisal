@@ -3,11 +3,11 @@ package com.yashkolte.Assignment.services;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import com.yashkolte.Assignment.model.Category;
 import com.yashkolte.Assignment.model.Employee;
 
-// Mark this class as a service component for business logic
 @Service
 public class BellCurveService {
 
@@ -18,6 +18,7 @@ public class BellCurveService {
      * @param categories List of performance categories with standard percentages.
      * @return A map of category names to actual percentage distribution.
      */
+    @Cacheable(value = "actualPercentages", key = "#employees.size() + #categories.size()")
     public Map<String, Double> calculateActualPercentage(List<Employee> employees, List<Category> categories) {
         // Group employees by their rating category and count the occurrences
         Map<String, Long> countByCategory = employees.stream()
@@ -31,9 +32,9 @@ public class BellCurveService {
 
         // Calculate the percentage of employees in each category
         for (Category category : categories) {
-            long count = countByCategory.getOrDefault(category.getName(), 0L); // Get count or default to 0
-            double percentage = (double) count / totalEmployees * 100;        // Calculate percentage
-            actualPercentage.put(category.getName(), percentage);            // Store in map
+            long count = countByCategory.getOrDefault(category.getName(), 0L);
+            double percentage = (double) count / totalEmployees * 100;
+            actualPercentage.put(category.getName(), percentage);
         }
 
         return actualPercentage;
@@ -46,22 +47,16 @@ public class BellCurveService {
      * @param categories List of performance categories with standard percentages.
      * @return A map of category names to deviation values.
      */
+    @Cacheable(value = "deviations", key = "#actual.hashCode() + #categories.size()")
     public Map<String, Double> calculateDeviation(Map<String, Double> actual, List<Category> categories) {
         // Map to store deviation values for each category
         Map<String, Double> deviation = new HashMap<>();
 
         // Calculate deviation for each category
         for (Category category : categories) {
-            double standard = category.getStandardPercentage();               // Standard percentage
-            double actualPercentage = actual.getOrDefault(category.getName(), 0.0); // Actual percentage
-            deviation.put(category.getName(), actualPercentage - standard);  // Calculate and store deviation
-        }
-
-        try {
-            ArrayList <Integer> list = new ArrayList<>();
-            //code
-        } catch (Exception e) {
-            throw new RuntimeException(e);
+            double standard = category.getStandardPercentage();
+            double actualPercentage = actual.getOrDefault(category.getName(), 0.0);
+            deviation.put(category.getName(), actualPercentage - standard);
         }
 
         return deviation;
@@ -74,6 +69,7 @@ public class BellCurveService {
      * @param employees List of employees.
      * @return A list of employees who might need adjustments.
      */
+    @Cacheable(value = "adjustments", key = "#deviation.hashCode() + #employees.size()")
     public List<Employee> suggestAdjustments(Map<String, Double> deviation, List<Employee> employees) {
         // List to store employees needing adjustment
         List<Employee> adjustments = new ArrayList<>();
@@ -83,9 +79,9 @@ public class BellCurveService {
             if (entry.getValue() > 0) { // Overrepresented category
                 String category = entry.getKey(); // Category name
                 adjustments.addAll(employees.stream()
-                        .filter(emp -> emp.getRatingCategory().equals(category)) // Filter employees in this category
-                        .limit((long) Math.ceil(entry.getValue()))              // Limit adjustments to deviation count
-                        .collect(Collectors.toList()));                        // Collect adjusted employees
+                        .filter(emp -> emp.getRatingCategory().equals(category))
+                        .limit((long) Math.ceil(entry.getValue()))
+                        .collect(Collectors.toList()));
             }
         }
 

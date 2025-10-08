@@ -1,0 +1,99 @@
+# Save the output of this file and use kubectl create -f to import
+# it into Kubernetes.
+#
+# Created with podman-5.3.1
+apiVersion: v1
+kind: Pod
+metadata:
+  annotations:
+    io.kubernetes.cri-o.SandboxID/assignmentbackend-podified: c2b46a080f3ea0d840cd6e38d3a7d12ce36b87d78a12fdab7e4303299e3c34b0
+    io.kubernetes.cri-o.SandboxID/assignmentfrontend-podified: c2b46a080f3ea0d840cd6e38d3a7d12ce36b87d78a12fdab7e4303299e3c34b0
+    io.kubernetes.cri-o.SandboxID/mysqldb-podified: c2b46a080f3ea0d840cd6e38d3a7d12ce36b87d78a12fdab7e4303299e3c34b0
+  creationTimestamp: "2025-01-23T07:04:12Z"
+  labels:
+    app: Assignmentpod
+  name: Assignmentpod
+spec:
+  containers:
+  - args:
+    - mysqld
+    env:
+    - name: HOSTNAME
+      value: 81b8e4eb0a99
+    - name: MYSQL_ROOT_PASSWORD
+      value: yash
+    - name: MYSQL_DATABASE
+      value: assignment
+    - name: HOME
+      value: /root
+    image: docker.io/library/mysql:8.0
+    name: mysqldb-podified
+    ports:
+    - containerPort: 3000
+      hostIP: 0.0.0.0
+      hostPort: 3000
+    - containerPort: 3306
+      hostIP: 0.0.0.0
+      hostPort: 3307
+    - containerPort: 8080
+      hostIP: 0.0.0.0
+      hostPort: 8080
+    volumeMounts:
+    - mountPath: /var/lib/mysql
+      name: bell-curve-performance-appraisal_mysql_data-pvc
+  - args:
+    - npm
+    - run
+    - dev
+    env:
+    - name: HOME
+      value: /root
+    - name: HOSTNAME
+      value: 4e1da4d6e7c5
+    - name: NEXT_PUBLIC_API_URL
+      value: http://backend:8080
+    image: docker.io/library/bell-curve-performance-appraisal-frontend:latest
+    name: assignmentfrontend-podified
+    volumeMounts:
+    - mountPath: /app
+      name: mnt-c-Users-YKolte-Desktop-Projects-Bell-Curve-Performance-Appraisal-frontend-host-0
+    - mountPath: /app/node_modules
+      name: cf9774ed3dbf2139535ee94540695a43d26ac9d2a669aa0f4904cb3c509cf507-pvc
+    - mountPath: /app/.next
+      name: 03af02873479ab244a64996eafd1fc753f6461743aa975219c1a226a72126dad-pvc
+  - env:
+    - name: SPRING_DATASOURCE_PASSWORD
+      value: yash
+    - name: SPRING_JPA_PROPERTIES_HIBERNATE_USE_SQL_COMMENTS
+      value: "true"
+    - name: SPRING_JPA_HIBERNATE_DDL-AUTO
+      value: update
+    - name: SPRING_JPA_SHOW-SQL
+      value: "true"
+    - name: SPRING_JPA_PROPERTIES_HIBERNATE_FORMAT_SQL
+      value: "true"
+    - name: SPRING_DATASOURCE_URL
+      value: jdbc:mysql://mysql:3306/assignment
+    - name: HOME
+      value: /root
+    - name: HOSTNAME
+      value: 0ee59946cba0
+    - name: SPRING_DATASOURCE_USERNAME
+      value: root
+    image: docker.io/library/bell-curve-performance-appraisal-backend:latest
+    name: assignmentbackend-podified
+  volumes:
+  - name: bell-curve-performance-appraisal_mysql_data-pvc
+    persistentVolumeClaim:
+      claimName: bell-curve-performance-appraisal_mysql_data
+  - hostPath:
+      path: /mnt/c/Users/YKolte/Desktop/Projects/Bell-Curve-Performance-Appraisal/frontend
+      type: Directory
+    name: mnt-c-Users-YKolte-Desktop-Projects-Bell-Curve-Performance-Appraisal-frontend-host-0
+  - name: cf9774ed3dbf2139535ee94540695a43d26ac9d2a669aa0f4904cb3c509cf507-pvc
+    persistentVolumeClaim:
+      claimName: cf9774ed3dbf2139535ee94540695a43d26ac9d2a669aa0f4904cb3c509cf507
+  - name: 03af02873479ab244a64996eafd1fc753f6461743aa975219c1a226a72126dad-pvc
+    persistentVolumeClaim:
+      claimName: 03af02873479ab244a64996eafd1fc753f6461743aa975219c1a226a72126dad
+---

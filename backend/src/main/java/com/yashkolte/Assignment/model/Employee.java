@@ -1,10 +1,14 @@
 package com.yashkolte.Assignment.model;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 // Lombok annotation to automatically generate getters, setters, equals, hashCode, and toString methods
 @Data
@@ -17,7 +21,7 @@ import lombok.NoArgsConstructor;
 
 // Mark this class as a JPA entity for persistence
 @Entity
-public class Employee {
+public class Employee implements Serializable {
 
     // Primary key for the Employee entity
     @Id
